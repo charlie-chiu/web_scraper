@@ -17,6 +17,13 @@ func main() {
 	s := scraper.NewFiveN1()
 	rentals := s.ScrapeList(q)
 
+	for i, rental := range rentals {
+		_ = s.ScrapeDetail(&rental)
+		log.Println("scraping", rental.URL, "...")
+		rentals[i] = rental
+		time.Sleep(100 * time.Millisecond)
+	}
+
 	filename := time.Now().Format("2006-01-02")
 	rentals.ReplaceSection()
 	rentals.Print()
