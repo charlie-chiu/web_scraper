@@ -20,7 +20,7 @@ func main() {
 	filename := time.Now().Format("2006-01-02")
 	rentals.ReplaceSection()
 	rentals.Print()
-	_ = rentals.SaveAsJSON(filename + ".json")
+	//_ = rentals.SaveAsJSON(filename + ".json")
 	_ = rentals.SaveAsXLSX(filename + ".xlsx")
 
 	log.Printf("execution time %s", time.Since(startTime))

@@ -179,6 +179,9 @@ func (f *FiveN1) parseRentHouse(page int, doc *goquery.Document) {
 				// Rent House Address
 				address := stringReplacer(infoContent.Find(".lightBox").Eq(1).Text())
 				rental.Address = address
+
+				postBy := infoContent.Find("p").Eq(2).Find("em").First().Text()
+				rental.PostBy = strings.TrimSpace(postBy)
 			})
 
 			// Rent Price
