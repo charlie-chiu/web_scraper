@@ -51,6 +51,7 @@ func (f *FiveN1) ScrapeList(url string) Rentals {
 
 	//parse
 	f.parseFirstPage()
+	f.showQueryInfo()
 
 	for page := 0; page < f.pages; page++ {
 		f.wg.Add(1)
@@ -189,6 +190,11 @@ func (f *FiveN1) ScrapePhone(url string) string {
 
 func (f *FiveN1) SetReqCookie(region string) {
 	f.cookie.Value = region
+}
+
+func (f *FiveN1) showQueryInfo() {
+	log.Printf("# Total Page: %3d | Total Record: %d\n", f.pages, f.records)
+	log.Printf("# Query URL: %s\n", f.queryURL)
 }
 
 func stringReplacer(text string) string {
