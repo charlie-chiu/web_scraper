@@ -20,8 +20,9 @@ type Rental struct {
 	Floor      string `json:"floor"`      //樓層
 	Price      string `json:"price"`      // 租金
 	//IsNew      bool   `json:"isNew"`
-	ID      string `json:"id"`      //出現於 url最後的識別，應該也是591內部的編號 R{id} for Rent{id}?
-	Phone   string `json:"phone"`   //聯絡電話
+	ID      string `json:"id"` //出現於 url最後的識別，應該也是591內部的編號 R{id} for Rent{id}?
+	PostBy  string `json:"-"`
+	Phone   string `json:"-"`       //聯絡電話
 	Section string `json:"section"` //行政區
 }
 
@@ -61,12 +62,12 @@ func (r Rentals) SaveAsJSON(filename string) error {
 
 func (r Rentals) SaveAsXLSX(filename string) error {
 	x := newXlsx()
-	err := x.WriteNextRow("區", "標題", "類型", "租金", "電話", "連結")
+	err := x.WriteNextRow("區", "標題", "類型", "租金", "聯絡人", "電話", "連結")
 	if err != nil {
 		return fmt.Errorf("xlsx.WriteNextRow error %v", err)
 	}
 	for _, rental := range r {
-		err := x.WriteNextRow(rental.Section, rental.Title, rental.OptionType, rental.Price, rental.Phone, rental.URL)
+		err := x.WriteNextRow(rental.Section, rental.Title, rental.OptionType, rental.Price, rental.PostBy, rental.Phone, rental.URL)
 		if err != nil {
 			return fmt.Errorf("xlsx.WriteNextRow error %v", err)
 		}
