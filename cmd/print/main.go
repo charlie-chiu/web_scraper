@@ -8,18 +8,15 @@ import (
 )
 
 func main() {
-	//o := scraper.NewOptions()
-	//o.Region = 8
-	//o.Section = "98"
-	o := scraper.TestOption
+	q := scraper.QueryMini
 
-	url, err := o.URL()
+	url, err := q.URL()
 	if err != nil {
 		log.Fatalf("option.URL error %v", err)
 	}
 
 	s := scraper.NewFiveN1()
-	s.SetReqCookie(strconv.Itoa(o.Region))
+	s.SetReqCookie(strconv.Itoa(q.Region))
 	rentals := s.ScrapeList(url)
 
 	rentals.Print()

@@ -11,7 +11,7 @@ const (
 	itemsPerPage = 30
 )
 
-type Options struct {
+type Query struct {
 	Region      int    `url:"region"`                // 地區 - 預設：`1`
 	Section     string `url:"section,omitempty"`     // 鄉鎮 - 可選擇多個區域，例如：`section=7,4`
 	Kind        int    `url:"kind"`                  // 租屋類型 - `0`：不限、`1`：整層住家、`2`：獨立套房、`3`：分租套房、`4`：雅房、`8`：車位，`24`：其他
@@ -32,8 +32,8 @@ type Options struct {
 	FirstRow    int    `url:"firstRow"`
 }
 
-func (o Options) URL() (string, error) {
-	v, err := query.Values(o)
+func (q Query) URL() (string, error) {
+	v, err := query.Values(q)
 	if err != nil {
 		return "", fmt.Errorf("query.Values error: %v", err)
 	}
@@ -41,9 +41,9 @@ func (o Options) URL() (string, error) {
 	return rootURL + "?" + v.Encode(), err
 }
 
-// NewOptions create a `Options` with default value.
-func NewOptions() *Options {
-	return &Options{
+// NewQuery create a `Query` with default value.
+func NewQuery() *Query {
+	return &Query{
 		Kind:      2,
 		Region:    1,
 		Section:   "0",
@@ -55,22 +55,24 @@ func NewOptions() *Options {
 }
 
 //台中市小量試驗
-var TestOption = &Options{
+var QueryMini = &Query{
 	Region:  8,
-	Section: "98",
+	Section: "98,99,100",
 	//Section:   "98,99,100,101",
 	Kind:      0,
-	RentPrice: "10000,15000",
+	RentPrice: "12000,15000",
 	OrderType: "desc",
+	Role:      "1",
 	Sex:       0,
 	FirstRow:  0,
 }
 
 // 台中市八區
-var Taichung8Option = &Options{
+var QueryTaiChung = &Query{
 	Region:    8,
 	Section:   "98,99,100,101,102,103,104,105",
 	Kind:      0,
+	Role:      "1",
 	RentPrice: "0,100000",
 	OrderType: "desc",
 	Sex:       0,
