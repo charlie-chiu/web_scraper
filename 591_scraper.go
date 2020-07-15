@@ -21,30 +21,6 @@ type RentScraper interface {
 	ScrapePhone(url string) string
 }
 
-// Rental represent a rental house
-// commented field mean we don't need it now
-type Rental struct {
-	//Preview    string `json:"preview"` // preview image
-	Title      string `json:"title"`
-	URL        string `json:"url"`
-	Address    string `json:"address"`
-	RentType   string `json:"rentType"`   // 以代號儲存的格局，不轉換的話沒有用
-	OptionType string `json:"optionType"` // 獨立套房、整層住家… etc
-	Ping       string `json:"ping"`       // 坪數
-	Floor      string `json:"floor"`      //樓層
-	Price      string `json:"price"`      // 租金
-	//IsNew      bool   `json:"isNew"`
-	ID      string `json:"id"`      //出現於 url最後的識別，應該也是591內部的編號 R{id} for Rent{id}?
-	Phone   string `json:"phone"`   //聯絡電話
-	Section string `json:"section"` //行政區
-}
-
-func NewRental() *Rental {
-	return &Rental{}
-}
-
-type Rentals []Rental
-
 type FiveN1 struct {
 	rentals  Rentals
 	queryURL string
@@ -94,26 +70,6 @@ func (f *FiveN1) parseFirstPage() {
 	f.parseRecordsNum(d.doc) // Record pages number at first
 }
 
-// Document is the representation goquery.Document.
-type Document struct {
-	doc *goquery.Document
-}
-
-func NewDocument() *Document {
-	return &Document{
-		doc: &goquery.Document{},
-	}
-}
-
-func (d *Document) clone(res *http.Response) {
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	d.doc = doc
-}
-
 func (f *FiveN1) request(url string) *http.Response {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -144,12 +100,6 @@ func (f *FiveN1) parseRecordsNum(doc *goquery.Document) {
 		f.records = totalRecord
 		f.pages = pages
 	})
-}
-
-func stringReplacer(text string) string {
-	replacer := strings.NewReplacer("\n", "", " ", "")
-
-	return pangu.SpacingText(replacer.Replace(text))
 }
 
 func (f *FiveN1) scrapeWorker(page int) {
@@ -233,6 +183,20 @@ func (f *FiveN1) parseRentHouse(page int, doc *goquery.Document) {
 	})
 }
 
+func (f *FiveN1) ScrapePhone(url string) string {
+	panic("implement me")
+}
+
+func (f *FiveN1) SetReqCookie(region string) {
+	f.cookie.Value = region
+}
+
+func stringReplacer(text string) string {
+	replacer := strings.NewReplacer("\n", "", " ", "")
+
+	return pangu.SpacingText(replacer.Replace(text))
+}
+
 func trimTextSpace(s string) string {
 	return strings.Fields(s)[0]
 }
@@ -244,10 +208,22 @@ func fillDescription(s []string) []string {
 	return s
 }
 
-func (f *FiveN1) ScrapePhone(url string) string {
-	panic("implement me")
+//todo: understand why clone document here, remove it if unnecessary
+type Document struct {
+	doc *goquery.Document
 }
 
-func (f *FiveN1) SetReqCookie(region string) {
-	f.cookie.Value = region
+func NewDocument() *Document {
+	return &Document{
+		doc: &goquery.Document{},
+	}
+}
+
+func (d *Document) clone(res *http.Response) {
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	d.doc = doc
 }
