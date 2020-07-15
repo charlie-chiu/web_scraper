@@ -1,5 +1,7 @@
 package scraper
 
+import "log"
+
 // Rental represent a rental house
 // commented field mean we don't need it now
 type Rental struct {
@@ -23,3 +25,9 @@ func NewRental() *Rental {
 }
 
 type Rentals []Rental
+
+func (r Rentals) Print() {
+	for i, rental := range r {
+		log.Printf("%4d.|%s|%s|%s|%s|%s\n", i, rental.Section, rental.OptionType, rental.Price, rental.Title, rental.URL)
+	}
+}

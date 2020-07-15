@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 
@@ -22,7 +21,5 @@ func main() {
 	s.SetReqCookie(strconv.Itoa(o.Region))
 	rentals := s.ScrapeList(url)
 
-	for _, rental := range rentals {
-		fmt.Println(rental)
-	}
+	rentals.Print()
 }
