@@ -26,8 +26,16 @@ func NewRental() *Rental {
 
 type Rentals []Rental
 
-func (r Rentals) Print() {
-	for i, rental := range r {
+func (r *Rentals) Print() {
+	for i, rental := range *r {
 		log.Printf("%4d.|%s|%s|%s|%s|%s\n", i, rental.Section, rental.OptionType, rental.Price, rental.Title, rental.URL)
+	}
+}
+
+// ReplaceSection replace all section code with section name
+func (r *Rentals) ReplaceSection() {
+	for i, rental := range *r {
+		sectionCode := rental.Section
+		(*r)[i].Section = sectionDict[sectionCode]
 	}
 }
