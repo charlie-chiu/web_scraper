@@ -16,9 +16,9 @@ type RentScraper interface {
 	// ScrapeList scrape rent.591.com.tw
 	ScrapeList(query *Query) Rentals
 
-	// ScrapePhone scrape rent.591.com.tw/rent-detail-{id}.html
+	// ScrapeDetail scrape rent.591.com.tw/rent-detail-{id}.html
 	// modify this to Scrape detail if needed
-	ScrapePhone(query *Query) string
+	ScrapeDetail(*Rental) error
 }
 
 type FiveN1 struct {
@@ -199,8 +199,23 @@ func (f *FiveN1) parseRentHouse(page int, doc *goquery.Document) {
 	})
 }
 
-func (f *FiveN1) ScrapePhone(url string) string {
-	panic("implement me")
+func (f *FiveN1) ScrapeDetail(r *Rental) error {
+	res := f.request(r.URL)
+
+	d := NewDocument()
+	d.clone(res)
+	phone, ok := d.doc.Find("#main").Find(".main_house_info.clearfix").
+		Find(".detailBox.clearfix").Find(".rightBox").Find(".dialPhoneNum").Attr("data-value")
+
+	if ok {
+		r.Phone = phone
+	} else {
+		r.Phone = "n/a"
+	}
+
+	r.Phone = phone
+
+	return nil
 }
 
 func (f *FiveN1) SetReqCookie(region string) {
