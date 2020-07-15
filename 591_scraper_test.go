@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -112,23 +113,96 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 		}
 
 		f := NewFiveN1()
-		rentals := f.ScrapeList(query)
+		gotRentals := f.ScrapeList(query)
 
-		wantSections := []string{
-			"98",
-			"98",
-			"99",
-			"99",
-			"100",
-			"100",
+		wantRentals := Rentals{
+			Rental{
+				Title:      "稀有花園別墅⭐別墅透天⭐雙平車⭐可寵",
+				URL:        "https://rent.591.com.tw/rent-detail-9538360.html",
+				Address:    "近好事多南區西區向上路黎明路永春東路南屯區 - 惠中路三段",
+				RentType:   "6",
+				OptionType: "整層住家",
+				Ping:       "128",
+				Floor:      "樓層：整棟",
+				Price:      "48,000 元 / 月",
+				ID:         "R9538360",
+				Phone:      "",
+				Section:    "98",
+			},
+			Rental{
+				Title:      "中興大學賺錢店面",
+				URL:        "https://rent.591.com.tw/rent-detail-9484376.html",
+				Address:    "賺錢住店南區 - 建成路 1727 號",
+				RentType:   "1",
+				OptionType: "整層住家",
+				Ping:       "50.8",
+				Floor:      "樓層：1/12",
+				Price:      "50,000 元 / 月",
+				ID:         "R9484376",
+				Phone:      "",
+				Section:    "98",
+			},
+			Rental{
+				Title:      "稀有花園別墅⭐別墅透天⭐雙平車⭐可寵",
+				URL:        "https://rent.591.com.tw/rent-detail-9538360.html",
+				Address:    "近好事多南區西區向上路黎明路永春東路南屯區 - 惠中路三段",
+				RentType:   "6",
+				OptionType: "整層住家",
+				Ping:       "128",
+				Floor:      "樓層：整棟",
+				Price:      "48,000 元 / 月",
+				ID:         "R9538360",
+				Phone:      "",
+				Section:    "99",
+			},
+			Rental{
+				Title:      "中興大學賺錢店面",
+				URL:        "https://rent.591.com.tw/rent-detail-9484376.html",
+				Address:    "賺錢住店南區 - 建成路 1727 號",
+				RentType:   "1",
+				OptionType: "整層住家",
+				Ping:       "50.8",
+				Floor:      "樓層：1/12",
+				Price:      "50,000 元 / 月",
+				ID:         "R9484376",
+				Phone:      "",
+				Section:    "99",
+			},
+			Rental{
+				Title:      "稀有花園別墅⭐別墅透天⭐雙平車⭐可寵",
+				URL:        "https://rent.591.com.tw/rent-detail-9538360.html",
+				Address:    "近好事多南區西區向上路黎明路永春東路南屯區 - 惠中路三段",
+				RentType:   "6",
+				OptionType: "整層住家",
+				Ping:       "128",
+				Floor:      "樓層：整棟",
+				Price:      "48,000 元 / 月",
+				ID:         "R9538360",
+				Phone:      "",
+				Section:    "100",
+			},
+			Rental{
+				Title:      "中興大學賺錢店面",
+				URL:        "https://rent.591.com.tw/rent-detail-9484376.html",
+				Address:    "賺錢住店南區 - 建成路 1727 號",
+				RentType:   "1",
+				OptionType: "整層住家",
+				Ping:       "50.8",
+				Floor:      "樓層：1/12",
+				Price:      "50,000 元 / 月",
+				ID:         "R9484376",
+				Phone:      "",
+				Section:    "100",
+			},
 		}
-		for i, wantSection := range wantSections {
-			if i >= len(rentals) {
-				t.Fatalf("%dth rental not exsits", i)
+
+		for i, wantRental := range wantRentals {
+			if i >= len(gotRentals) {
+				t.Fatalf("%dth wantRental not exsits", i)
 			}
-			gotSection := rentals[i].Section
-			if wantSection != gotSection {
-				t.Errorf("%dth rental wantSection not equal, want %q, got %q", i, wantSection, gotSection)
+			gotRental := gotRentals[i]
+			if !reflect.DeepEqual(wantRental, gotRental) {
+				t.Errorf("%dth wantRental wantSection not equal, \nwant %v,\n got %v", i, wantRental, gotRental)
 			}
 		}
 	})
