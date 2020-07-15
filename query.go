@@ -58,6 +58,7 @@ func NewQuery() *Query {
 
 //台中市小量試驗
 var QueryMini = &Query{
+	RootURL: URL591,
 	Region:  8,
 	Section: "98,99,100",
 	//Section:   "98,99,100,101",
@@ -71,6 +72,7 @@ var QueryMini = &Query{
 
 // 台中市八區
 var QueryTaiChung = &Query{
+	RootURL:   URL591,
 	Region:    8,
 	Section:   "98,99,100,101,102,103,104,105",
 	Kind:      0,

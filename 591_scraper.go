@@ -14,11 +14,11 @@ import (
 type RentScraper interface {
 
 	// ScrapeList scrape rent.591.com.tw
-	ScrapeList(query Query) Rentals
+	ScrapeList(query *Query) Rentals
 
 	// ScrapePhone scrape rent.591.com.tw/rent-detail-{id}.html
 	// modify this to Scrape detail if needed
-	ScrapePhone(query Query) string
+	ScrapePhone(query *Query) string
 }
 
 type FiveN1 struct {
@@ -46,7 +46,7 @@ func NewFiveN1() *FiveN1 {
 	}
 }
 
-func (f *FiveN1) ScrapeList(query Query) (rentals Rentals) {
+func (f *FiveN1) ScrapeList(query *Query) (rentals Rentals) {
 	f.queryURL, _ = query.URL()
 
 	for _, section := range SplitSection(query) {
@@ -228,7 +228,7 @@ func fillDescription(s []string) []string {
 	return s
 }
 
-func SplitSection(query Query) []string {
+func SplitSection(query *Query) []string {
 	sections := strings.Split(query.Section, ",")
 
 	return sections

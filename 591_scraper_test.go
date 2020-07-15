@@ -29,7 +29,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 			assert.Equal(t, wantValue, gotCookie.Value)
 		}))
 		defer server.Close()
-		query := Query{
+		query := &Query{
 			RootURL: server.URL + "/?",
 		}
 		scraper := NewFiveN1()
@@ -49,7 +49,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 		}))
 
 		defer server.Close()
-		query := Query{
+		query := &Query{
 			RootURL: server.URL + "/?",
 		}
 
@@ -62,7 +62,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 	t.Run("scrape url with 120 items", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(item120Handler))
 		defer server.Close()
-		query := Query{
+		query := &Query{
 			RootURL: server.URL + "/?",
 		}
 
@@ -83,7 +83,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 			_, _ = w.Write(html)
 		}))
 		defer server.Close()
-		query := Query{
+		query := &Query{
 			RootURL: server.URL + "/?",
 		}
 
@@ -107,7 +107,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 		}))
 		defer server.Close()
 
-		query := Query{
+		query := &Query{
 			RootURL: server.URL + "/?",
 			Section: "98,99,100",
 		}
