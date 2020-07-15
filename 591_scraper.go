@@ -47,11 +47,10 @@ func NewFiveN1() *FiveN1 {
 }
 
 func (f *FiveN1) ScrapeList(query *Query) (rentals Rentals) {
-	f.queryURL, _ = query.URL()
-
 	for _, section := range SplitSection(query) {
 		subQuery := query
 		subQuery.Section = section
+		f.queryURL, _ = subQuery.URL()
 
 		//parse
 		f.parseFirstPage()

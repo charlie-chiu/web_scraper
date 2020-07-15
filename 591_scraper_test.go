@@ -96,7 +96,16 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 	})
 
 	t.Run("scrape to Rentals", func(t *testing.T) {
+		wantQuerySection := []string{
+			//parse will request twice per section
+			"98", "98",
+			"99", "99",
+			"100", "100",
+		}
+		var gotQuerySection []string
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			gotQuerySection = append(gotQuerySection, r.URL.Query().Get("section"))
+
 			html, _ := ioutil.ReadFile("test_fixture/591with2items.html")
 			w.Header().Set("Content-Type", "application/html")
 			_, _ = w.Write(html)
@@ -200,6 +209,11 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 			if !reflect.DeepEqual(wantRental, gotRental) {
 				t.Errorf("%dth wantRental wantSection not equal, \nwant %v,\n got %v", i, wantRental, gotRental)
 			}
+		}
+
+		// quick and dirty test
+		if !reflect.DeepEqual(wantQuerySection, gotQuerySection) {
+			t.Errorf("query section not equal, want %v, got %v", wantQuerySection, gotQuerySection)
 		}
 	})
 }
