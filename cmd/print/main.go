@@ -8,9 +8,10 @@ import (
 )
 
 func main() {
-	o := scraper.NewOptions()
-	o.Region = 8
-	o.Section = "98"
+	//o := scraper.NewOptions()
+	//o.Region = 8
+	//o.Section = "98"
+	o := scraper.TestOption
 
 	url, err := o.URL()
 	if err != nil {

@@ -53,3 +53,26 @@ func NewOptions() *Options {
 		FirstRow:  0,
 	}
 }
+
+//台中市小量試驗
+var TestOption = &Options{
+	Region:  8,
+	Section: "98",
+	//Section:   "98,99,100,101",
+	Kind:      0,
+	RentPrice: "10000,15000",
+	OrderType: "desc",
+	Sex:       0,
+	FirstRow:  0,
+}
+
+// 台中市八區
+var Taichung8Option = &Options{
+	Region:    8,
+	Section:   "98,99,100,101,102,103,104,105",
+	Kind:      0,
+	RentPrice: "0,100000",
+	OrderType: "desc",
+	Sex:       0,
+	FirstRow:  0,
+}
