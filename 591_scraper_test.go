@@ -1,6 +1,7 @@
 package scraper
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -88,5 +89,44 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 
 		// this test will fail because test fixture always have 30 item per page.
 		//assert.Equal(t, 333, len(rentals))
+	})
+
+	t.Run("scrape group by section and store section in Rental", func(t *testing.T) {
+		var requestCount int
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requestCount++
+			html, _ := ioutil.ReadFile("test_fixture/591with2items.html")
+			w.Header().Set("Content-Type", "application/html")
+			_, _ = w.Write(html)
+		}))
+		defer server.Close()
+
+		url := fmt.Sprintf("%s/?%s", server.URL, "wantSection=98,99,100")
+
+		f := NewFiveN1()
+		rentals := f.ScrapeList(url)
+
+		// 2 request per section
+		wantRequest := 6
+		assert.Equal(t, wantRequest, requestCount)
+
+		wantSections := []string{
+			"98",
+			"98",
+			"99",
+			"99",
+			"100",
+			"100",
+		}
+		for i, wantSection := range wantSections {
+			if i >= len(rentals) {
+				t.Fatalf("%dth rental not exsits", i)
+			}
+			gotSection := rentals[i].Section
+			if wantSection != gotSection {
+				t.Errorf("%dth rental wantSection not equal, want %s, got %s", i, wantSection, gotSection)
+			}
+		}
 	})
 }
