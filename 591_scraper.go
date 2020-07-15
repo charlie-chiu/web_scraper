@@ -47,6 +47,8 @@ func NewFiveN1() *FiveN1 {
 }
 
 func (f *FiveN1) ScrapeList(query *Query) (rentals Rentals) {
+	f.SetReqCookie(strconv.Itoa(query.Region))
+
 	for _, section := range SplitSection(query) {
 		subQuery := query
 		subQuery.Section = section

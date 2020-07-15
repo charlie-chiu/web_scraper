@@ -19,42 +19,24 @@ func item120Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func TestFiveN1_ScrapeList(t *testing.T) {
-	t.Run("scrape with default cookie", func(t *testing.T) {
-		wantValue := "1"
+	t.Run("scrape with cookie urlJumpIp=region", func(t *testing.T) {
+		wantRegion := 20
+		regionStr := "20"
 		cookieName := "urlJumpIp"
 
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			gotCookie, err := r.Cookie(cookieName)
 			assert.Nil(t, err)
-			assert.Equal(t, wantValue, gotCookie.Value)
-		}))
-		defer server.Close()
-		query := &Query{
-			RootURL: server.URL + "/?",
-		}
-		scraper := NewFiveN1()
-
-		_ = scraper.ScrapeList(query)
-	})
-
-	// todo: shouldn't do this by package user
-	t.Run("scrape with custom cookie", func(t *testing.T) {
-		wantValue := "20"
-		cookieName := "urlJumpIp"
-
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			gotCookie, err := r.Cookie(cookieName)
-			assert.Nil(t, err)
-			assert.Equal(t, wantValue, gotCookie.Value)
+			assert.Equal(t, regionStr, gotCookie.Value)
 		}))
 
 		defer server.Close()
 		query := &Query{
 			RootURL: server.URL + "/?",
+			Region:  wantRegion,
 		}
 
 		scraper := NewFiveN1()
-		scraper.SetReqCookie("20")
 
 		_ = scraper.ScrapeList(query)
 	})
