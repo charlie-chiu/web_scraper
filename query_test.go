@@ -8,6 +8,7 @@ import (
 
 func TestURL(t *testing.T) {
 	q := &Query{
+		RootURL: "https://rent.591.com.tw/",
 		Region:  8,
 		Section: "100,102",
 	}

@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	rootURL      = "https://rent.591.com.tw/"
+	URL591       = "https://rent.591.com.tw/"
 	itemsPerPage = 30
 )
 
 type Query struct {
+	RootURL     string `url:"-"`
 	Region      int    `url:"region"`                // 地區 - 預設：`1`
 	Section     string `url:"section,omitempty"`     // 鄉鎮 - 可選擇多個區域，例如：`section=7,4`
 	Kind        int    `url:"kind"`                  // 租屋類型 - `0`：不限、`1`：整層住家、`2`：獨立套房、`3`：分租套房、`4`：雅房、`8`：車位，`24`：其他
@@ -38,12 +39,13 @@ func (q Query) URL() (string, error) {
 		return "", fmt.Errorf("query.Values error: %v", err)
 	}
 
-	return rootURL + "?" + v.Encode(), err
+	return q.RootURL + "?" + v.Encode(), err
 }
 
 // NewQuery create a `Query` with default value.
 func NewQuery() *Query {
 	return &Query{
+		RootURL:   URL591,
 		Kind:      2,
 		Region:    1,
 		Section:   "0",

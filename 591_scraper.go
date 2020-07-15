@@ -14,11 +14,11 @@ import (
 type RentScraper interface {
 
 	// ScrapeList scrape rent.591.com.tw
-	ScrapeList(url string) Rentals
+	ScrapeList(query Query) Rentals
 
 	// ScrapePhone scrape rent.591.com.tw/rent-detail-{id}.html
 	// modify this to Scrape detail if needed
-	ScrapePhone(url string) string
+	ScrapePhone(query Query) string
 }
 
 type FiveN1 struct {
@@ -46,8 +46,8 @@ func NewFiveN1() *FiveN1 {
 	}
 }
 
-func (f *FiveN1) ScrapeList(url string) Rentals {
-	f.queryURL = url
+func (f *FiveN1) ScrapeList(query Query) Rentals {
+	f.queryURL, _ = query.URL()
 
 	//parse
 	f.parseFirstPage()
