@@ -3,6 +3,7 @@ module web_scraper
 go 1.14
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.2.0
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/andybalholm/cascadia v1.2.0 // indirect
 	github.com/google/go-querystring v1.0.0

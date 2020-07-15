@@ -1,6 +1,11 @@
 package scraper
 
-import "log"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+)
 
 // Rental represent a rental house
 // commented field mean we don't need it now
@@ -38,4 +43,39 @@ func (r *Rentals) ReplaceSection() {
 		sectionCode := rental.Section
 		(*r)[i].Section = sectionDict[sectionCode]
 	}
+}
+
+func (r Rentals) SaveAsJSON(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("create %s error %v", filename, err)
+	}
+
+	err = json.NewEncoder(file).Encode(r)
+	if err != nil {
+		return fmt.Errorf("json encode error %v", err)
+	}
+
+	return nil
+}
+
+func (r Rentals) SaveAsXLSX(filename string) error {
+	x := newXlsx()
+	err := x.WriteNextRow("區", "標題", "類型", "租金", "電話", "連結")
+	if err != nil {
+		return fmt.Errorf("xlsx.WriteNextRow error %v", err)
+	}
+	for _, rental := range r {
+		err := x.WriteNextRow(rental.Section, rental.Title, rental.OptionType, rental.Price, rental.Phone, rental.URL)
+		if err != nil {
+			return fmt.Errorf("xlsx.WriteNextRow error %v", err)
+		}
+	}
+
+	err = x.Save(filename)
+	if err != nil {
+		return fmt.Errorf("xlsx save file error %v", err)
+	}
+
+	return nil
 }
