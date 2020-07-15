@@ -46,21 +46,35 @@ func NewFiveN1() *FiveN1 {
 	}
 }
 
-func (f *FiveN1) ScrapeList(query Query) Rentals {
+func (f *FiveN1) ScrapeList(query Query) (rentals Rentals) {
 	f.queryURL, _ = query.URL()
 
-	//parse
-	f.parseFirstPage()
-	f.showQueryInfo()
+	for _, section := range SplitSection(query) {
+		subQuery := query
+		subQuery.Section = section
 
-	for page := 0; page < f.pages; page++ {
-		f.wg.Add(1)
-		go f.scrapeWorker(page)
+		//parse
+		f.parseFirstPage()
+		f.showQueryInfo()
+
+		for page := 0; page < f.pages; page++ {
+			f.wg.Add(1)
+			go f.scrapeWorker(page)
+		}
+
+		f.wg.Wait()
+
+		// set section
+		for i := range f.rentals {
+			f.rentals[i].Section = section
+		}
+
+		rentals = append(rentals, f.rentals...)
+
+		f.rentals = Rentals{}
 	}
 
-	f.wg.Wait()
-
-	return f.rentals
+	return
 }
 
 func (f *FiveN1) parseFirstPage() {
@@ -212,6 +226,12 @@ func fillDescription(s []string) []string {
 	s[2] = "沒有格局說明"
 
 	return s
+}
+
+func SplitSection(query Query) []string {
+	sections := strings.Split(query.Section, ",")
+
+	return sections
 }
 
 //todo: understand why clone document here, remove it if unnecessary
