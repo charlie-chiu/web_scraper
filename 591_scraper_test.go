@@ -63,6 +63,30 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 
 		rentals := scraper.ScrapeList(url)
 
+		assert.Equal(t, 120, scraper.records)
+		assert.Equal(t, 4, scraper.pages)
 		assert.Equal(t, 120, len(rentals))
+	})
+
+	t.Run("scrape url with 333 items", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testFixture := "test_fixture/591with333items.html"
+			html, _ := ioutil.ReadFile(testFixture)
+			w.Header().Set("Content-Type", "application/html")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write(html)
+		}))
+		defer server.Close()
+		url := server.URL + "/?"
+
+		scraper := NewFiveN1()
+
+		_ = scraper.ScrapeList(url)
+
+		assert.Equal(t, 333, scraper.records)
+		assert.Equal(t, 12, scraper.pages)
+
+		// this test will fail because test fixture always have 30 item per page.
+		//assert.Equal(t, 333, len(rentals))
 	})
 }
