@@ -82,3 +82,16 @@ var QueryTaiChung = &Query{
 	Sex:       0,
 	FirstRow:  0,
 }
+
+// 台北市 12 區
+var QueryTaipei = &Query{
+	RootURL:   URL591,
+	Region:    1,
+	Section:   "1,2,3,4,5,6,7,8,9,10,11,12",
+	Kind:      0,
+	Role:      "1",
+	RentPrice: "0,100000",
+	OrderType: "desc",
+	Sex:       0,
+	FirstRow:  0,
+}
