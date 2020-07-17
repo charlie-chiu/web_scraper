@@ -233,7 +233,7 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 		rental.URL = svr.URL + strings.TrimPrefix(rental.URL, "https://rent.591.com.tw")
 
 		scraper := NewFiveN1()
-		_ = scraper.ScrapeDetail(rental)
+		_ = scraper.ScrapeRentalDetail(rental)
 	})
 
 	t.Run("update rental.Phone", func(t *testing.T) {
@@ -249,7 +249,7 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 		rental.URL = svr.URL + rentalDetailPath
 
 		scraper := NewFiveN1()
-		_ = scraper.ScrapeDetail(rental)
+		_ = scraper.ScrapeRentalDetail(rental)
 
 		assert.Equal(t, "0980-240-200", rental.Phone)
 	})

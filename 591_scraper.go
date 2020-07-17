@@ -68,21 +68,14 @@ func (f *FiveN1) ScrapeRentals(query *Query) (rentals Rentals) {
 	return
 }
 
-func (f *FiveN1) ScrapeDetail(r *Rental) error {
+//ScrapeRentalDetail request r.URL then update rental
+func (f *FiveN1) ScrapeRentalDetail(r *Rental) error {
 	res := f.request(r.URL)
 
 	doc := newDocumentFromResponse(res)
 
-	phone, ok := doc.Find("#main").Find(".main_house_info.clearfix").
+	r.Phone, _ = doc.Find("#main").Find(".main_house_info.clearfix").
 		Find(".detailBox.clearfix").Find(".rightBox").Find(".dialPhoneNum").Attr("data-value")
-
-	if ok {
-		r.Phone = phone
-	} else {
-		r.Phone = "n/a"
-	}
-
-	r.Phone = phone
 
 	return nil
 }

@@ -15,7 +15,7 @@ func main() {
 	rentals := s.ScrapeRentals(q)
 
 	for i, rental := range rentals {
-		_ = s.ScrapeDetail(&rental)
+		_ = s.ScrapeRentalDetail(&rental)
 		log.Println("scraping", rental.URL, "...")
 		rentals[i] = rental
 		time.Sleep(100 * time.Millisecond)
