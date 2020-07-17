@@ -39,7 +39,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 
 		scraper := NewFiveN1()
 
-		_ = scraper.ScrapeList(query)
+		_ = scraper.ScrapeRentals(query)
 	})
 
 	t.Run("scrape url with 120 items", func(t *testing.T) {
@@ -50,7 +50,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 		}
 
 		scraper := NewFiveN1()
-		rentals := scraper.ScrapeList(query)
+		rentals := scraper.ScrapeRentals(query)
 
 		assert.Equal(t, 120, scraper.records)
 		assert.Equal(t, 4, scraper.pages)
@@ -72,7 +72,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 
 		scraper := NewFiveN1()
 
-		_ = scraper.ScrapeList(query)
+		_ = scraper.ScrapeRentals(query)
 
 		assert.Equal(t, 333, scraper.records)
 		assert.Equal(t, 12, scraper.pages)
@@ -101,7 +101,7 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 		}
 
 		f := NewFiveN1()
-		gotRentals := f.ScrapeList(query)
+		gotRentals := f.ScrapeRentals(query)
 
 		wantRentals := Rentals{
 			Rental{

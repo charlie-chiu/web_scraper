@@ -13,7 +13,7 @@ func main() {
 	q := scraper.QueryTaipei
 
 	s := scraper.NewFiveN1()
-	rentals := s.ScrapeList(q)
+	rentals := s.ScrapeRentals(q)
 
 	for i, rental := range rentals {
 		_ = s.ScrapeDetail(&rental)

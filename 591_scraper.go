@@ -36,7 +36,7 @@ func NewFiveN1() *FiveN1 {
 	}
 }
 
-func (f *FiveN1) ScrapeList(query *Query) (rentals Rentals) {
+func (f *FiveN1) ScrapeRentals(query *Query) (rentals Rentals) {
 	f.setRegionCookie(strconv.Itoa(query.Region))
 
 	for _, section := range SplitSection(query) {
