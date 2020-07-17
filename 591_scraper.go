@@ -188,7 +188,6 @@ func (f *FiveN1) parseRentHouse(doc *goquery.Document) {
 
 				rental.OptionType = trimTextSpace(splitDescription[0])
 				rental.Ping = trimTextSpace(splitDescription[1])
-				rental.RentType = trimTextSpace(splitDescription[2])
 				rental.Floor = trimTextSpace(splitDescription[3])
 
 				// Rent House Address
