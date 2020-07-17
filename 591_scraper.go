@@ -11,16 +11,6 @@ import (
 	"github.com/vinta/pangu"
 )
 
-type RentScraper interface {
-
-	// ScrapeList scrape rent.591.com.tw
-	ScrapeList(query *Query) Rentals
-
-	// ScrapeDetail scrape rent.591.com.tw/rent-detail-{id}.html
-	// modify this to Scrape detail if needed
-	ScrapeDetail(*Rental) error
-}
-
 type FiveN1 struct {
 	rentals  Rentals
 	queryURL string
