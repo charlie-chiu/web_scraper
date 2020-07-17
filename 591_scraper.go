@@ -135,8 +135,6 @@ func (f *FiveN1) scrapeWorker(page int) {
 
 	doc := newDocumentFromResponse(response)
 
-	f.parseRecordsNum(doc) // Record pages number at first
-
 	f.parseRentHouse(doc)
 }
 
