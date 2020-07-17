@@ -18,10 +18,10 @@ type FiveN1 struct {
 	records int
 	pages   int
 
-	wg     sync.WaitGroup
-	rw     sync.RWMutex
-	client *http.Client
-	cookie *http.Cookie
+	wg           sync.WaitGroup
+	rw           sync.RWMutex
+	client       *http.Client
+	cookieRegion *http.Cookie
 }
 
 func NewFiveN1() *FiveN1 {
@@ -31,13 +31,13 @@ func NewFiveN1() *FiveN1 {
 		Value: "1",
 	}
 	return &FiveN1{
-		cookie: defaultCookie,
-		client: &http.Client{},
+		cookieRegion: defaultCookie,
+		client:       &http.Client{},
 	}
 }
 
 func (f *FiveN1) ScrapeList(query *Query) (rentals Rentals) {
-	f.SetReqCookie(strconv.Itoa(query.Region))
+	f.setRegionCookie(strconv.Itoa(query.Region))
 
 	for _, section := range SplitSection(query) {
 		subQuery := query
@@ -68,6 +68,25 @@ func (f *FiveN1) ScrapeList(query *Query) (rentals Rentals) {
 	return
 }
 
+func (f *FiveN1) ScrapeDetail(r *Rental) error {
+	res := f.request(r.URL)
+
+	doc := newDocumentFromResponse(res)
+
+	phone, ok := doc.Find("#main").Find(".main_house_info.clearfix").
+		Find(".detailBox.clearfix").Find(".rightBox").Find(".dialPhoneNum").Attr("data-value")
+
+	if ok {
+		r.Phone = phone
+	} else {
+		r.Phone = "n/a"
+	}
+
+	r.Phone = phone
+
+	return nil
+}
+
 func (f *FiveN1) parseFirstPage() {
 	response := f.request(f.queryURL)
 
@@ -76,23 +95,13 @@ func (f *FiveN1) parseFirstPage() {
 	f.parseRecordsNum(doc) // Record pages number at first
 }
 
-func newDocumentFromResponse(response *http.Response) *goquery.Document {
-	doc, err := goquery.NewDocumentFromReader(response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer response.Body.Close()
-
-	return doc
-}
-
 func (f *FiveN1) request(url string) *http.Response {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	req.AddCookie(f.cookie)
+	req.AddCookie(f.cookieRegion)
 
 	res, err := f.client.Do(req)
 	if err != nil {
@@ -204,32 +213,26 @@ func (f *FiveN1) parseRentHouse(page int, doc *goquery.Document) {
 	})
 }
 
-func (f *FiveN1) ScrapeDetail(r *Rental) error {
-	res := f.request(r.URL)
-
-	doc := newDocumentFromResponse(res)
-
-	phone, ok := doc.Find("#main").Find(".main_house_info.clearfix").
-		Find(".detailBox.clearfix").Find(".rightBox").Find(".dialPhoneNum").Attr("data-value")
-
-	if ok {
-		r.Phone = phone
-	} else {
-		r.Phone = "n/a"
+func (f *FiveN1) setRegionCookie(region string) {
+	f.cookieRegion = &http.Cookie{
+		Name:  "urlJumpIp",
+		Value: region,
 	}
-
-	r.Phone = phone
-
-	return nil
-}
-
-func (f *FiveN1) SetReqCookie(region string) {
-	f.cookie.Value = region
 }
 
 func (f *FiveN1) showQueryInfo() {
 	log.Printf("# Total Page: %3d | Total Record: %d\n", f.pages, f.records)
 	log.Printf("# Query URL: %s\n", f.queryURL)
+}
+
+func newDocumentFromResponse(response *http.Response) *goquery.Document {
+	doc, err := goquery.NewDocumentFromReader(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer response.Body.Close()
+
+	return doc
 }
 
 func stringReplacer(text string) string {
