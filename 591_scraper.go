@@ -79,11 +79,21 @@ func (f *FiveN1) ScrapeList(query *Query) (rentals Rentals) {
 }
 
 func (f *FiveN1) parseFirstPage() {
-	d := NewDocument()
-	res := f.request(f.queryURL)
-	d.clone(res)
+	response := f.request(f.queryURL)
 
-	f.parseRecordsNum(d.doc) // Record pages number at first
+	doc := newDocumentFromResponse(response)
+
+	f.parseRecordsNum(doc) // Record pages number at first
+}
+
+func newDocumentFromResponse(response *http.Response) *goquery.Document {
+	doc, err := goquery.NewDocumentFromReader(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer response.Body.Close()
+
+	return doc
 }
 
 func (f *FiveN1) request(url string) *http.Response {
@@ -121,12 +131,14 @@ func (f *FiveN1) parseRecordsNum(doc *goquery.Document) {
 func (f *FiveN1) scrapeWorker(page int) {
 	defer f.wg.Done()
 
-	d := NewDocument()
 	firstRow := strconv.Itoa(page * itemsPerPage)
-	res := f.request(f.queryURL + "&firstRow=" + firstRow)
-	d.clone(res)
+	response := f.request(f.queryURL + "&firstRow=" + firstRow)
 
-	f.parseRentHouse(page, d.doc)
+	doc := newDocumentFromResponse(response)
+
+	f.parseRecordsNum(doc) // Record pages number at first
+
+	f.parseRentHouse(page, doc)
 }
 
 func (f *FiveN1) parseRentHouse(page int, doc *goquery.Document) {
@@ -205,9 +217,9 @@ func (f *FiveN1) parseRentHouse(page int, doc *goquery.Document) {
 func (f *FiveN1) ScrapeDetail(r *Rental) error {
 	res := f.request(r.URL)
 
-	d := NewDocument()
-	d.clone(res)
-	phone, ok := d.doc.Find("#main").Find(".main_house_info.clearfix").
+	doc := newDocumentFromResponse(res)
+
+	phone, ok := doc.Find("#main").Find(".main_house_info.clearfix").
 		Find(".detailBox.clearfix").Find(".rightBox").Find(".dialPhoneNum").Attr("data-value")
 
 	if ok {
@@ -251,24 +263,4 @@ func SplitSection(query *Query) []string {
 	sections := strings.Split(query.Section, ",")
 
 	return sections
-}
-
-//todo: understand why clone document here, remove it if unnecessary
-type Document struct {
-	doc *goquery.Document
-}
-
-func NewDocument() *Document {
-	return &Document{
-		doc: &goquery.Document{},
-	}
-}
-
-func (d *Document) clone(res *http.Response) {
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	d.doc = doc
 }
