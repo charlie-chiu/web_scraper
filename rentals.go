@@ -24,8 +24,12 @@ type Rental struct {
 	PostBy  string `json:"-"`
 	Phone   string `json:"-"`       //聯絡電話
 	Section string `json:"section"` //行政區
+
+	Layout    string `json:"layout"`    // 格局, ex: 3房2廳2衛2陽台
+	Community string `json:"community"` // 社區名 ex: 君臨天廈
 }
 
+//區	標題	類型	租金	格局	坪數	樓層	社區	聯絡人 電話 連結
 func NewRental() *Rental {
 	return &Rental{}
 }
@@ -34,7 +38,8 @@ type Rentals []Rental
 
 func (r *Rentals) Print() {
 	for i, rental := range *r {
-		log.Printf("%4d.|%s|%s|%s|%s|%s\n", i, rental.Section, rental.OptionType, rental.Price, rental.Title, rental.URL)
+		//log.Printf("%4d.|%s|%s|%s|%s|%s\n", i, rental.Section, rental.OptionType, rental.Price, rental.Title, rental.URL)
+		log.Printf("%4d.|%+v\n", i, rental)
 	}
 }
 
@@ -60,6 +65,7 @@ func (r Rentals) SaveAsJSON(filename string) error {
 	return nil
 }
 
+//區	標題	類型	租金	格局	坪數	樓層	社區	聯絡人	電話	連結
 func (r Rentals) SaveAsXLSX(filename string) error {
 	x := newXlsx()
 	err := x.WriteNextRow("區", "標題", "類型", "租金", "聯絡人", "電話", "連結")
