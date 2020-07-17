@@ -254,3 +254,43 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 		assert.Equal(t, "0980-240-200", rental.Phone)
 	})
 }
+
+func TestFiveN1_ScrapeRentalsDetail(t *testing.T) {
+	const rentalDetailPath = "/rent-detail-9538360.html"
+	rental := Rental{
+		Title:      "稀有花園別墅⭐別墅透天⭐雙平車⭐可寵",
+		URL:        "https://rent.591.com.tw/rent-detail-9538360.html",
+		Address:    "近好事多南區西區向上路黎明路永春東路南屯區 - 惠中路三段",
+		RentType:   "6",
+		OptionType: "整層住家",
+		Ping:       "128",
+		Floor:      "樓層：整棟",
+		Price:      "48,000 元 / 月",
+		ID:         "R9538360",
+		Phone:      "",
+		Section:    "99",
+	}
+	rentals := Rentals{
+		rental,
+		rental,
+	}
+
+	t.Run("update all rental.Phone", func(t *testing.T) {
+		svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testFixture := "test_fixture/591_detail.html"
+			html, _ := ioutil.ReadFile(testFixture)
+			//w.Header().Set("Content-Type", "application/html")
+			//w.WriteHeader(http.StatusOK)
+			_, _ = w.Write(html)
+		}))
+		defer svr.Close()
+
+		rental.URL = svr.URL + rentalDetailPath
+
+		scraper := NewFiveN1()
+		scraper.ScrapeRentalsDetail(rentals)
+
+		assert.Equal(t, "0980-240-200", rentals[0].Phone)
+		assert.Equal(t, "0980-240-200", rentals[1].Phone)
+	})
+}

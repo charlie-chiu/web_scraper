@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/vinta/pangu"
@@ -17,6 +18,7 @@ type FiveN1 struct {
 
 	records int
 	pages   int
+	delay   time.Duration
 
 	wg           sync.WaitGroup
 	rw           sync.RWMutex
@@ -30,7 +32,9 @@ func NewFiveN1() *FiveN1 {
 		Name:  "urlJumpIp",
 		Value: "1",
 	}
+	defaultDelay := 10 * time.Millisecond
 	return &FiveN1{
+		delay:        defaultDelay,
 		cookieRegion: defaultCookie,
 		client:       &http.Client{},
 	}
@@ -78,6 +82,15 @@ func (f *FiveN1) ScrapeRentalDetail(r *Rental) error {
 		Find(".detailBox.clearfix").Find(".rightBox").Find(".dialPhoneNum").Attr("data-value")
 
 	return nil
+}
+
+func (f *FiveN1) ScrapeRentalsDetail(rentals Rentals) {
+	for i, rental := range rentals {
+		log.Println("scraping", rental.URL)
+		_ = f.ScrapeRentalDetail(&rental)
+		rentals[i] = rental
+		time.Sleep(f.delay)
+	}
 }
 
 func (f *FiveN1) parseFirstPage() {
