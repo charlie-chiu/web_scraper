@@ -137,10 +137,10 @@ func (f *FiveN1) scrapeWorker(page int) {
 
 	f.parseRecordsNum(doc) // Record pages number at first
 
-	f.parseRentHouse(page, doc)
+	f.parseRentHouse(doc)
 }
 
-func (f *FiveN1) parseRentHouse(page int, doc *goquery.Document) {
+func (f *FiveN1) parseRentHouse(doc *goquery.Document) {
 	doc.Find("#content").Each(func(_ int, selector *goquery.Selection) {
 		selector.Find(".listInfo.clearfix").Each(func(item int, listInfo *goquery.Selection) {
 			rental := NewRental()
