@@ -78,8 +78,19 @@ func (f *FiveN1) ScrapeRentalDetail(r *Rental) error {
 
 	doc := newDocumentFromResponse(res)
 
-	r.Phone, _ = doc.Find("#main").Find(".main_house_info.clearfix").
-		Find(".detailBox.clearfix").Find(".rightBox").Find(".dialPhoneNum").Attr("data-value")
+	selection := doc.Find("#main").Find(".main_house_info.clearfix").
+		Find(".detailBox.clearfix").Find(".rightBox")
+	r.Phone, _ = selection.Find(".dialPhoneNum").Attr("data-value")
+	selection.Find(".detailInfo.clearfix").Find(".attr > li").Each(func(i int, selection *goquery.Selection) {
+
+		if i == 0 {
+			r.Layout = strings.TrimPrefix(selection.Text(), "格局 :  ")
+		}
+
+		if i == 5 {
+			r.Community = strings.TrimPrefix(selection.Text(), "社區 :  ")
+		}
+	})
 
 	return nil
 }

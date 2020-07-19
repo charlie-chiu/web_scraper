@@ -229,7 +229,7 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 		_ = scraper.ScrapeRentalDetail(rental)
 	})
 
-	t.Run("update rental.Phone", func(t *testing.T) {
+	t.Run("update phone, community and layout", func(t *testing.T) {
 		svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			testFixture := "test_fixture/591_detail.html"
 			html, _ := ioutil.ReadFile(testFixture)
@@ -244,7 +244,10 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 		scraper := NewFiveN1()
 		_ = scraper.ScrapeRentalDetail(rental)
 
-		assert.Equal(t, "0980-240-200", rental.Phone)
+		assert.Equal(t, "0980-240-200", rental.Phone, "rental.Phone not equal")
+		assert.Equal(t, "6房3廳4衛4陽台", rental.Layout, "rental.Layout not equal")
+		//need a better fixture
+		assert.Equal(t, "近好事多南區西區向上路黎明路永春東路", rental.Community, "rental.Community not equal")
 	})
 }
 
