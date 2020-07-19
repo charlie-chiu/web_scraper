@@ -70,12 +70,12 @@ func (r Rentals) SaveAsJSON(filename string) error {
 //區	標題	類型	租金	格局	坪數	樓層	社區	聯絡人	電話	連結
 func (r Rentals) SaveAsXLSX(filename string) error {
 	x := newXlsx()
-	err := x.WriteNextRow("區", "標題", "類型", "租金", "聯絡人", "電話", "連結")
+	err := x.WriteNextRow("區", "標題", "類型", "租金", "格局", "坪數", "樓層", "社區", "聯絡人", "電話", "連結")
 	if err != nil {
 		return fmt.Errorf("xlsx.WriteNextRow error %v", err)
 	}
 	for _, rental := range r {
-		err := x.WriteNextRow(rental.Section, rental.Title, rental.OptionType, rental.Price, rental.PostBy, rental.Phone, rental.URL)
+		err := x.WriteNextRow(rental.Section, rental.Title, rental.OptionType, rental.Price, rental.Layout, rental.Ping, rental.Floor, rental.Community, rental.PostBy, rental.Phone, rental.URL)
 		if err != nil {
 			return fmt.Errorf("xlsx.WriteNextRow error %v", err)
 		}
