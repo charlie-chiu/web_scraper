@@ -249,6 +249,36 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 		//need a better fixture
 		assert.Equal(t, "近好事多南區西區向上路黎明路永春東路", rental.Community, "rental.Community not equal")
 	})
+
+	t.Run("scrape rental without layout", func(t *testing.T) {
+		svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testFixture := "test_fixture/591_detail_without_layout.html"
+			html, _ := ioutil.ReadFile(testFixture)
+			_, _ = w.Write(html)
+		}))
+		defer svr.Close()
+
+		rental := &Rental{
+			Title:      "近中山醫，近愛買捷運套房",
+			URL:        "https://rent.591.com.tw/rent-detail-9538360.html",
+			Address:    "南區-福田五街20號",
+			OptionType: "型態 :  電梯大樓",
+			Ping:       "12",
+			Floor:      "樓層 :  3F/15F",
+			Price:      "15,000 元/月",
+			ID:         "R9491919",
+			Phone:      "",
+			Section:    "99",
+		}
+		rental.URL = svr.URL + rentalDetailPath
+
+		scraper := NewFiveN1()
+		_ = scraper.ScrapeRentalDetail(rental)
+
+		assert.Equal(t, "0986-851-077 轉 1397162", rental.Phone, "rental.Phone not equal")
+		assert.Equal(t, "", rental.Layout, "rental.Layout not equal")
+		assert.Equal(t, "豐邑閱文心", rental.Community, "rental.Community not equal")
+	})
 }
 
 func TestFiveN1_ScrapeRentalsDetail(t *testing.T) {

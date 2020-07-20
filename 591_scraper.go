@@ -82,13 +82,14 @@ func (f *FiveN1) ScrapeRentalDetail(r *Rental) error {
 		Find(".detailBox.clearfix").Find(".rightBox")
 	r.Phone, _ = selection.Find(".dialPhoneNum").Attr("data-value")
 	selection.Find(".detailInfo.clearfix").Find(".attr > li").Each(func(i int, selection *goquery.Selection) {
+		listText := selection.Text()
 
-		if i == 0 {
-			r.Layout = strings.TrimPrefix(selection.Text(), "格局 :  ")
+		if strings.HasPrefix(listText, "格局") {
+			r.Layout = strings.TrimPrefix(listText, "格局 :  ")
 		}
 
-		if i == 5 {
-			r.Community = strings.TrimPrefix(selection.Text(), "社區 :  ")
+		if strings.HasPrefix(listText, "社區") {
+			r.Community = strings.TrimPrefix(listText, "社區 :  ")
 		}
 	})
 
