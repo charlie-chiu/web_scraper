@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -202,28 +201,16 @@ func TestFiveN1_ScrapeList(t *testing.T) {
 }
 
 func TestFiveN1_ScrapeDetail(t *testing.T) {
-
-	const rentalDetailPath = "/rent-detail-9538360.html"
-	rental := &Rental{
-		Title:      "稀有花園別墅⭐別墅透天⭐雙平車⭐可寵",
-		URL:        "https://rent.591.com.tw/rent-detail-9538360.html",
-		Address:    "近好事多南區西區向上路黎明路永春東路南屯區 - 惠中路三段",
-		OptionType: "整層住家",
-		Ping:       "128",
-		Floor:      "樓層：整棟",
-		Price:      "48,000 元 / 月",
-		ID:         "R9538360",
-		Phone:      "",
-		Section:    "99",
-	}
-
 	t.Run("request rental.URL", func(t *testing.T) {
-
+		wantPath := "/rent-detail-9538360.html"
 		svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			assert.Equal(t, rentalDetailPath, r.URL.Path)
+			assert.Equal(t, wantPath, r.URL.Path)
 		}))
 		defer svr.Close()
-		rental.URL = svr.URL + strings.TrimPrefix(rental.URL, "https://rent.591.com.tw")
+
+		rental := &Rental{
+			URL: svr.URL + wantPath,
+		}
 
 		scraper := NewFiveN1()
 		_ = scraper.ScrapeRentalDetail(rental)
@@ -239,14 +226,25 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 		}))
 		defer svr.Close()
 
-		rental.URL = svr.URL + rentalDetailPath
+		rental := &Rental{
+			Title:      "稀有花園別墅⭐別墅透天⭐雙平車⭐可寵",
+			URL:        svr.URL + "/rent-detail-9538360.html",
+			Address:    "近好事多南區西區向上路黎明路永春東路南屯區 - 惠中路三段",
+			OptionType: "整層住家",
+			Ping:       "128",
+			Floor:      "樓層：整棟",
+			Price:      "48,000 元 / 月",
+			ID:         "R9538360",
+			Phone:      "",
+			Section:    "99",
+		}
 
 		scraper := NewFiveN1()
 		_ = scraper.ScrapeRentalDetail(rental)
 
 		assert.Equal(t, "0980-240-200", rental.Phone, "rental.Phone not equal")
 		assert.Equal(t, "6房3廳4衛4陽台", rental.Layout, "rental.Layout not equal")
-		//need a better fixture
+		//need a better fixture here
 		assert.Equal(t, "近好事多南區西區向上路黎明路永春東路", rental.Community, "rental.Community not equal")
 	})
 
@@ -260,7 +258,7 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 
 		rental := &Rental{
 			Title:      "近中山醫，近愛買捷運套房",
-			URL:        "https://rent.591.com.tw/rent-detail-9538360.html",
+			URL:        svr.URL + "/rent-detail-9538360.html",
 			Address:    "南區-福田五街20號",
 			OptionType: "型態 :  電梯大樓",
 			Ping:       "12",
@@ -270,7 +268,6 @@ func TestFiveN1_ScrapeDetail(t *testing.T) {
 			Phone:      "",
 			Section:    "99",
 		}
-		rental.URL = svr.URL + rentalDetailPath
 
 		scraper := NewFiveN1()
 		_ = scraper.ScrapeRentalDetail(rental)
